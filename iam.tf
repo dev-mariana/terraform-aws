@@ -13,6 +13,27 @@ resource "aws_iam_openid_connect_provider" "oidc-git" {
   }
 }
 
+resource "aws_iam_role" "app-runner-role" {
+  name = "app-runner-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          "Service" = "build.apprunner.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = {
+    IAC = "True"
+  }
+}
+
 resource "aws_iam_role" "ecr_role" {
   name = "ecr_role"
 
@@ -48,7 +69,22 @@ resource "aws_iam_role_policy" "ecr_app_permission" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "Statement1"
+        Sid      = "Statement1",
+        Effect   = "Allow",
+        Action   = "apprunner:*",
+        Resource = "*"
+      },
+      {
+        Sid    = "Statement2",
+        Effect = "Allow",
+        Action = [
+          "iam:PassRole",
+          "iam:CreateServiceLinkedRole"
+        ],
+        Resource = "*"
+      },
+      {
+        Sid    = "Statement3"
         Effect = "Allow"
         Action = [
           "ecr:GetDownloadUrlForLayer",
@@ -64,4 +100,9 @@ resource "aws_iam_role_policy" "ecr_app_permission" {
       }
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "app-runner-role-ecr" {
+  role       = aws_iam_role.app-runner-role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
