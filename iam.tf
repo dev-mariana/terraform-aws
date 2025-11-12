@@ -44,12 +44,12 @@ resource "aws_iam_role" "ecr_role" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:eusouodaniel/rocketseat.ci.api:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:dev-mariana/rocketseat.ci.api:ref:refs/heads/main"
           }
         }
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::403429280851:oidc-provider/token.actions.githubusercontent.com"
+          Federated = "arn:aws:iam::598602257739:oidc-provider/token.actions.githubusercontent.com"
         }
       }
     ]
