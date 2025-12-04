@@ -5,6 +5,11 @@ terraform {
       version = "6.19.0"
     }
   }
+  backend "s3" {
+    bucket = "rocketseat-iac-98"
+    key    = "state/terraform.tfstate"
+    region = "us-east-2"
+  }
 }
 
 provider "aws" {
@@ -31,3 +36,4 @@ resource "aws_s3_bucket_versioning" "terraform-state" {
     status = "Enabled"
   }
 }
+
